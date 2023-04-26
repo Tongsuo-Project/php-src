@@ -1669,7 +1669,7 @@ int php_openssl_setup_crypto(php_stream *stream,
 	int method_flags;
 	zend_long min_version = 0;
 	zend_long max_version = 0;
-	char *cipherlist = NULL;
+	char *cipherlist = NULL, *ciphersuites = NULL;
 	char *alpn_protocols = NULL;
 	zval *val;
 	int is_ntls = 0;
@@ -1753,6 +1753,13 @@ int php_openssl_setup_crypto(php_stream *stream,
 #endif
 	if (cipherlist) {
 		if (SSL_CTX_set_cipher_list(sslsock->ctx, cipherlist) != 1) {
+			return FAILURE;
+		}
+	}
+
+	GET_VER_OPT_STRING("ciphersuites", ciphersuites);
+	if (ciphersuites) {
+		if (SSL_CTX_set_ciphersuites(sslsock->ctx, ciphersuites) != 1) {
 			return FAILURE;
 		}
 	}
